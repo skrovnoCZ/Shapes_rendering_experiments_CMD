@@ -15,4 +15,4 @@ _________________________________________________
 
 Shapes grid rendering:
 
-rendering shapes using points connected with calculated lines
+rendering shapes using points connected with calculated lines (press Enter to continue)
