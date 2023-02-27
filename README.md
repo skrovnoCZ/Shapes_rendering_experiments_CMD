@@ -3,18 +3,24 @@ Experimenting with shape rendering calculations using math equations and coord (
 
 Warning: FLASHING IMAGES when using slow computer
 
-Collision Detection:
+## Collision Detection:
 
 simple collision detection of rectangles
 
 _________________________________________________
 
-Shapes rendering:
+## Shapes rendering:
 
 rendering shapes using math (circles, rectangles...)
 
 _________________________________________________
 
-Shapes grid rendering:
+## Shapes grid rendering:
 
-rendering shapes using points connected with calculated lines (press Enter to continue)
+rendering shapes using points connected with calculated lines and non-static shape (press Enter to continue)
+
+_________________________________________________
+
+## Vertice obj grid render:
+
+rendering shapes with static shape.
