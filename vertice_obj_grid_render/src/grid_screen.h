@@ -21,6 +21,7 @@
 class grid_screen
 {
 private:
+    //using string instead of vector to speed up rendering (but it has it's limits)
     std::string m_grid;
     std::string m_grid_cache;
     size_t m_width;
