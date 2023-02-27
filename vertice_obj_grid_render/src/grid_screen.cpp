@@ -35,7 +35,7 @@ grid_screen::grid_screen(size_t new_height, size_t new_width)
 
 void grid_screen::set_point(size_t new_x, size_t new_y, char new_symbol)
 {
-    if (new_x > 0 && new_x < m_width - 1 && new_y > 0 && new_y < m_height)
+    if ((new_x > 0) && (new_x < m_width - 1) && (new_y > 0) && (new_y < m_height))
     {
         m_grid[str_coord_2d(new_x, (m_height - 1) - new_y, m_width)] = new_symbol;  //the reason for "(m_height - 1) - new_y" is to reverse y input
     }
