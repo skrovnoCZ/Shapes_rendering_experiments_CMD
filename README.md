@@ -1,6 +1,8 @@
 # Shapes_rendering_experiments_CMD
 Experimenting with shape rendering calculations using math equations and coord (CMD text based)
 
+Warning: FLASHING IMAGES when using slow computer
+
 Collision Detection:
 
 simple collision detection of rectangles
