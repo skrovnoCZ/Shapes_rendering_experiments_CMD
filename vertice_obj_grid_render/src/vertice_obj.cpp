@@ -1,7 +1,10 @@
 #include "vertice_obj.h"
 #include <string>
+#include "event_logger.h"
 
-vertice_obj::vertice_obj()
+#define LOG_VERT_OBJ "Vertice Object"
+
+vertice_obj::vertice_obj(std::fstream &new_log_file) : m_log_file(new_log_file)
 {
     m_pos_x = 0.000000;
     m_pos_y = 0.000000;
@@ -11,6 +14,7 @@ vertice_obj::vertice_obj()
     m_mtl_group = "_!NOINIT!_";
     m_mtl_specific = "_!NOINIT!_";
     m_obj_ok = true;
+    log_output(LOG_TYPE_INFO, "Object created");
 }
 
 void vertice_obj::set_obj_coord(double new_x, double new_y, double new_z)
@@ -313,4 +317,12 @@ std::vector<double> vertice_obj::get_vertices_y()
 std::vector<double> vertice_obj::get_vertices_z()
 {
     return m_vertice_z;
+}
+
+void vertice_obj::log_output(std::string new_type, std::string new_message)
+{
+    if (m_log_file.is_open())
+    {
+        m_log_file << logEvent(LOG_VERT_OBJ, new_type, new_message);
+    }
 }

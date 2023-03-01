@@ -13,13 +13,15 @@
 class object_renderer
 {
 private:
-    grid_screen* m_p_screen;
+    grid_screen *m_p_screen;
+    std::fstream &m_log_file;
 public:
-    object_renderer(grid_screen* new_p_screen);
+    object_renderer(grid_screen* new_p_screen, std::fstream &new_log_file);
     void render_object(vertice_obj &new_object);
     ~object_renderer();
 private:
-    void calculate_line(float new_x_source_0, float new_y_source_0, float new_x_dist, float new_y_dist);
+    void calculate_line(double new_x_source_0, double new_y_source_0, double new_x_dist, double new_y_dist);
+    void log_output(std::string new_type, std::string new_message);
 };
 
 #endif

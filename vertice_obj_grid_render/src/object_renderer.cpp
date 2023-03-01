@@ -1,11 +1,14 @@
 #include "object_renderer.h"
 #include <map>
+#include "event_logger.h"
+#define LOG_OBJ_REND "object_renderer"
 
 using namespace std;
 
-object_renderer::object_renderer(grid_screen* new_p_screen)
+object_renderer::object_renderer(grid_screen* new_p_screen, std::fstream &new_log_file) : m_log_file(new_log_file)
 {
     m_p_screen = new_p_screen;
+    log_output(LOG_TYPE_INFO, "Object renderer initialised");
 }
 
 void object_renderer::render_object(vertice_obj &new_object)
@@ -22,16 +25,16 @@ void object_renderer::render_object(vertice_obj &new_object)
         if (elem_i.second.size() > 1)   //if at least one connection with selected point
         {
             int debug = vert_mapped_temp.find(vert_knowon_connection_temp.at(i))->second.at(0);
-            float x_source_0 = vertice_x.at(vert_mapped_temp.find(vert_knowon_connection_temp.at(i))->second.at(0));
-            float y_source_0 = vertice_y.at(vert_mapped_temp.find(vert_knowon_connection_temp.at(i))->second.at(0));
+            double x_source_0 = vertice_x.at(vert_mapped_temp.find(vert_knowon_connection_temp.at(i))->second.at(0));
+            double y_source_0 = vertice_y.at(vert_mapped_temp.find(vert_knowon_connection_temp.at(i))->second.at(0));
             //float z_source_0 = vertice_z.at(vert_mapped_temp.find(vert_knowon_connection_temp.at(j))->second.at(0));
 
-            float x_source_1 = vertice_x.at(vert_mapped_temp.find(vert_knowon_connection_temp.at(i))->second.at(1));
-            float y_source_1 = vertice_y.at(vert_mapped_temp.find(vert_knowon_connection_temp.at(i))->second.at(1));
+            double x_source_1 = vertice_x.at(vert_mapped_temp.find(vert_knowon_connection_temp.at(i))->second.at(1));
+            double y_source_1 = vertice_y.at(vert_mapped_temp.find(vert_knowon_connection_temp.at(i))->second.at(1));
             //float z_source_1 = vertice_z.at(vert_mapped_temp.find(vert_knowon_connection_temp.at(j))->second.at(1));
 
-            float x_dist = x_source_1 - x_source_0;
-            float y_dist = y_source_1 - y_source_0;
+            double x_dist = x_source_1 - x_source_0;
+            double y_dist = y_source_1 - y_source_0;
 
             calculate_line(x_source_0, y_source_0, x_dist, y_dist);
         }
@@ -41,13 +44,17 @@ void object_renderer::render_object(vertice_obj &new_object)
                                    (size_t)vertice_y.at(vert_mapped_temp.find(vert_knowon_connection_temp.at(i))->second.at(0)),
                                    SYMBOL_DET); //single point (no connection)
         }
+        else
+        {
+            log_output(LOG_TYPE_WARNING, "No vertices to render");
+        }
 
         i++;
     }
 }
 
 //line between vertices calculator
-void object_renderer::calculate_line(float new_x_source_0, float new_y_source_0, float new_x_dist, float new_y_dist)
+void object_renderer::calculate_line(double new_x_source_0, double new_y_source_0, double new_x_dist, double new_y_dist)
 {
     
     if (abs(new_x_dist) > abs(new_y_dist))
@@ -97,4 +104,12 @@ void object_renderer::calculate_line(float new_x_source_0, float new_y_source_0,
 
 object_renderer::~object_renderer()
 {
+}
+
+void object_renderer::log_output(std::string new_type, std::string new_message)
+{
+    if (m_log_file.is_open())
+    {
+        m_log_file << logEvent(LOG_OBJ_REND, new_type, new_message);
+    }
 }
