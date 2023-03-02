@@ -54,10 +54,6 @@ void close_log()
     {
         file_log.close();
     }
-    else
-    {
-        event_log(LOG_LOG, LOG_TYPE_WARNING, "Attempting to close already closed log file");
-    }
 }
 
 //event logger
