@@ -67,8 +67,4 @@ void event_log(std::string event_source, std::string event_type, std::string mes
             + ": " + message + "\n";
         file_log << log_message;
     }
-    else
-    {
-        event_log(LOG_LOG, LOG_TYPE_WARNING, "Log failed. Log file is closed");
-    }
 }
