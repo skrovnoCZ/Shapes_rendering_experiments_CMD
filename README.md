@@ -23,4 +23,6 @@ _________________________________________________
 
 ## Vertice obj grid render:
 
-rendering shapes with static shape.
+rendering moving shapes. (rectangles etc.)
+
+To shift render position, use arrow keys.
