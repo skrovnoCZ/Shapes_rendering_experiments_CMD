@@ -25,14 +25,23 @@ private:
     std::string m_grid_cache;
     size_t m_width;
     size_t m_height;
-    std::fstream &m_log_file;
+    bool m_render;
+    bool m_rendered;
+    int m_shift_x;
+    int m_shift_y;
 public:
-    grid_screen(size_t new_height, size_t new_width, std::fstream &new_log_file);
-    void set_point(size_t new_x, size_t new_y, char new_symbol);
+    grid_screen(size_t new_height, size_t new_width);
+    void set_point(int new_x, int new_y, char new_symbol);
     size_t get_width();
     size_t get_height();
     void print_grid();
     void refresh_grid();
+    void shift_x(int new_shift);
+    void shift_y(int new_shift);
+    int get_shift_x();
+    int get_shift_y();
+    void shift_reset();
+    void render_status_reset();
     ~grid_screen();
 private:
     size_t str_coord_2d(size_t x, size_t y, size_t line_len);

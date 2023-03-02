@@ -14,9 +14,8 @@ class object_renderer
 {
 private:
     grid_screen *m_p_screen;
-    std::fstream &m_log_file;
 public:
-    object_renderer(grid_screen* new_p_screen, std::fstream &new_log_file);
+    object_renderer(grid_screen* new_p_screen);
     void render_object(vertice_obj &new_object);
     ~object_renderer();
 private:

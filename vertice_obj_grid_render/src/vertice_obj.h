@@ -28,9 +28,8 @@ private:
     std::string m_mtl_group;
     std::string m_mtl_specific;
     bool m_obj_ok;
-    std::fstream &m_log_file;
 public:
-    vertice_obj(std::fstream &new_log_file);
+    vertice_obj();
     void set_obj_coord(double new_x, double new_y, double new_z);
     void set_obj_coord_x(double new_x);
     void set_obj_coord_y(double new_y);

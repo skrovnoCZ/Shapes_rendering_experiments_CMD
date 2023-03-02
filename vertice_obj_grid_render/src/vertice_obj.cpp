@@ -4,7 +4,7 @@
 
 #define LOG_VERT_OBJ "Vertice Object"
 
-vertice_obj::vertice_obj(std::fstream &new_log_file) : m_log_file(new_log_file)
+vertice_obj::vertice_obj()
 {
     m_pos_x = 0.000000;
     m_pos_y = 0.000000;
@@ -287,10 +287,17 @@ void vertice_obj::obj_prepare()
             }
         }
     }
+    bool configured = false;
 
     for (const auto& elem : m_vert_mapped)
     {
         m_vert_connected.push_back(elem.first);  //remember which points to connect
+        configured = true;
+    }
+
+    if (configured)
+    {
+        log_output(LOG_TYPE_INFO, "Object parameters configured");
     }
 }
 
@@ -321,8 +328,5 @@ std::vector<double> vertice_obj::get_vertices_z()
 
 void vertice_obj::log_output(std::string new_type, std::string new_message)
 {
-    if (m_log_file.is_open())
-    {
-        m_log_file << logEvent(LOG_VERT_OBJ, new_type, new_message);
-    }
+    logEvent(LOG_VERT_OBJ, new_type, new_message);
 }

@@ -2,7 +2,7 @@
 #include "event_logger.h"
 #define LOG_SCREEN "screen"
 
-grid_screen::grid_screen(size_t new_height, size_t new_width, std::fstream &new_log_file) : m_log_file(new_log_file)
+grid_screen::grid_screen(size_t new_height, size_t new_width)
 {
     for (size_t y = 0; y < new_height; y++)
     {
@@ -31,23 +31,32 @@ grid_screen::grid_screen(size_t new_height, size_t new_width, std::fstream &new_
     m_grid_cache = m_grid;
     m_width = new_width;
     m_height = new_height;
-    log_output(LOG_TYPE_INFO, "Screen initialised");
+    log_output(LOG_TYPE_INFO, "Screen initialised (Dimensions: " + std::to_string(m_width) + "x" + std::to_string(m_height) + ")");
+    m_render = true;
+    m_rendered = false;
+    m_shift_x = 0;
+    m_shift_y = 0;
 }
 
-void grid_screen::set_point(size_t new_x, size_t new_y, char new_symbol)
+void grid_screen::set_point(int new_x, int new_y, char new_symbol)
 {
+    new_x += m_shift_x;
+    new_y += m_shift_y;
+
     if ((new_x > 0) && (new_x < m_width - 1) && (new_y > 0) && (new_y < m_height - 1))
     {
         m_grid[str_coord_2d(new_x, (m_height - 1) - new_y, m_width)] = new_symbol;  //the reason for "(m_height - 1) - new_y" is to reverse y input
     }
+#if 0
     else
     {
         log_output(LOG_TYPE_WARNING,
                    "Point set out of range at X: "+ std::to_string(new_x + 1)
                    + " Y: " + std::to_string(new_y + 1)
-                   + ". Screen dimensions: Width " + std::to_string(m_width - 1)
-                   + ", Height: " + std::to_string(m_height - 1));
+                   + ". Screen dimensions: Width " + "0-" + std::to_string(m_width - 1)
+                   + ", Height: " + "0-" + std::to_string(m_height - 1));
     }
+#endif
 }
 
 size_t grid_screen::get_width()
@@ -63,19 +72,61 @@ size_t grid_screen::get_height()
 //universal for both windows and linux terminals
 void grid_screen::print_grid()
 {
+    if (m_render && !m_rendered)    //flip-flop to do "cout" every second time
+    {
 #ifdef __linux__ 
-    system("clear");
+        system("clear");
 #elif _WIN32
-    system("CLS");
+        system("CLS");
 #else
 #endif
 
-    std::cout << m_grid;
+        std::cout << m_grid;
+        m_render = false;
+        m_rendered = true;
+    }
+    else if (!m_render && m_rendered)
+    {
+        m_render = true;
+        m_rendered = false;
+    }
 }
 
 void grid_screen::refresh_grid()
 {
     m_grid = m_grid_cache;
+}
+
+void grid_screen::shift_x(int new_shift)
+{
+    m_shift_x += new_shift;
+}
+
+void grid_screen::shift_y(int new_shift)
+{
+    m_shift_y += new_shift;
+}
+
+void grid_screen::shift_reset()
+{
+    m_shift_x = 0;
+    m_shift_y = 0;
+}
+
+void grid_screen::render_status_reset()
+{
+    m_render = true;
+    m_rendered = false;
+}
+
+int grid_screen::get_shift_x()
+{
+    return m_shift_x;
+}
+
+int grid_screen::get_shift_y()
+{
+    return m_shift_y;
 }
 
 grid_screen::~grid_screen()
@@ -90,8 +141,5 @@ size_t grid_screen::str_coord_2d(size_t x, size_t y, size_t line_len)
 
 void grid_screen::log_output(std::string new_type, std::string new_message)
 {
-    if (m_log_file.is_open())
-    {
-        m_log_file << logEvent(LOG_SCREEN, new_type, new_message);
-    }
+    logEvent(LOG_SCREEN, new_type, new_message);
 }

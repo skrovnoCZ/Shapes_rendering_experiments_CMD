@@ -5,7 +5,7 @@
 
 using namespace std;
 
-object_renderer::object_renderer(grid_screen* new_p_screen, std::fstream &new_log_file) : m_log_file(new_log_file)
+object_renderer::object_renderer(grid_screen* new_p_screen)
 {
     m_p_screen = new_p_screen;
     log_output(LOG_TYPE_INFO, "Object renderer initialised");
@@ -40,8 +40,8 @@ void object_renderer::render_object(vertice_obj &new_object)
         }
         else if (elem_i.second.size() == 1)
         {
-            m_p_screen->set_point( (size_t)vertice_x.at(vert_mapped_temp.find(vert_knowon_connection_temp.at(i))->second.at(0)),
-                                   (size_t)vertice_y.at(vert_mapped_temp.find(vert_knowon_connection_temp.at(i))->second.at(0)),
+            m_p_screen->set_point( (int)vertice_x.at(vert_mapped_temp.find(vert_knowon_connection_temp.at(i))->second.at(0)),
+                                   (int)vertice_y.at(vert_mapped_temp.find(vert_knowon_connection_temp.at(i))->second.at(0)),
                                    SYMBOL_DET); //single point (no connection)
         }
         else
@@ -63,19 +63,19 @@ void object_renderer::calculate_line(double new_x_source_0, double new_y_source_
         {
             for (int i = (int)new_x_dist; i <= 0; i++)
             {
-                m_p_screen->set_point((size_t)new_x_source_0 + i, (size_t)(new_y_source_0 + ((new_y_dist / new_x_dist) * i)), SYMBOL_DET); //calculating line without degrees
+                m_p_screen->set_point((int)new_x_source_0 + i, (int)(new_y_source_0 + ((new_y_dist / new_x_dist) * i)), SYMBOL_DET); //calculating line without degrees
             }
         }
         else if (new_x_dist > 0.0f)
         {
             for (int i = 0; i <= (int)new_x_dist; i++)
             {
-                m_p_screen->set_point((size_t)new_x_source_0 + i, (size_t)(new_y_source_0 + ((new_y_dist / new_x_dist) * i)), SYMBOL_DET); //calculating line without degrees
+                m_p_screen->set_point((int)new_x_source_0 + i, (int)(new_y_source_0 + ((new_y_dist / new_x_dist) * i)), SYMBOL_DET); //calculating line without degrees
             }
         }
         else
         {
-            m_p_screen->set_point((size_t)new_x_source_0, (size_t)new_y_source_0, SYMBOL_DET); //single point (distance 0)
+            m_p_screen->set_point((int)new_x_source_0, (int)new_y_source_0, SYMBOL_DET); //single point (distance 0)
         }
     }
     else
@@ -84,19 +84,19 @@ void object_renderer::calculate_line(double new_x_source_0, double new_y_source_
         {
             for (int i = (int)new_y_dist; i <= 0; i++)
             {
-                m_p_screen->set_point((size_t)(new_x_source_0 + ((new_x_dist / new_y_dist) * i)), (size_t)new_y_source_0 + i, SYMBOL_DET); //calculating line without degrees
+                m_p_screen->set_point((int)(new_x_source_0 + ((new_x_dist / new_y_dist) * i)), (int)new_y_source_0 + i, SYMBOL_DET); //calculating line without degrees
             }
         }
         else if (new_y_dist > 0.0f)
         {
             for (int i = 0; i <= (int)new_y_dist; i++)
             {
-                m_p_screen->set_point((size_t)(new_x_source_0 + ((new_x_dist / new_y_dist) * i)), (size_t)new_y_source_0 + i, SYMBOL_DET); //calculating line without degrees
+                m_p_screen->set_point((int)(new_x_source_0 + ((new_x_dist / new_y_dist) * i)), (int)new_y_source_0 + i, SYMBOL_DET); //calculating line without degrees
             }
         }
         else
         {
-            m_p_screen->set_point((size_t)new_x_source_0, (size_t)new_y_source_0, SYMBOL_DET); //single point (distance 0)
+            m_p_screen->set_point((int)new_x_source_0, (int)new_y_source_0, SYMBOL_DET); //single point (distance 0)
         }
     }
     
@@ -108,8 +108,5 @@ object_renderer::~object_renderer()
 
 void object_renderer::log_output(std::string new_type, std::string new_message)
 {
-    if (m_log_file.is_open())
-    {
-        m_log_file << logEvent(LOG_OBJ_REND, new_type, new_message);
-    }
+    logEvent(LOG_OBJ_REND, new_type, new_message);
 }

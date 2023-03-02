@@ -1,10 +1,10 @@
 ﻿#include <iostream>
 #include <Windows.h>
-#include <fstream>
 #include "event_logger.h"
 #include "object_renderer.h"
 //#define MATH_FUNCT_REQUEST
 #include "custom_functions.h"
+#include "keyboard_keys.h"
 
 #define LOG_MAIN "main"
 
@@ -12,28 +12,22 @@ using namespace std;
 
 int main()
 {
-    std::fstream log_file;
-    log_file.open(logName("proccess"), fstream::out);
+    logOpen("proccess");
+    logEvent(LOG_MAIN, LOG_TYPE_INFO, "Inintialising program...");
 
-    if (log_file.is_open())
-    {
-        log_file << logEvent(LOG_MAIN, LOG_TYPE_INFO, "Inintialising program...");
-    }
+    keyboard_keys keyboard;
+    grid_screen* p_screen = new grid_screen(75, 75);
+    object_renderer* p_renderer = new object_renderer(p_screen);
+    map<string, vertice_obj*>m_vert_mapped;
+    vector<string> object_names = { "square", "rectangle", "polygon", "shape" };
 
-    grid_screen* p_screen = new grid_screen(75, 75, log_file);
-    map<std::string, vertice_obj*>m_vert_mapped;
-    vertice_obj *p_object1 = new vertice_obj(log_file);
-    vertice_obj *p_object2 = new vertice_obj(log_file);
-    vertice_obj *p_object3 = new vertice_obj(log_file);
-    vector<string> object_names = { "square", "rectangle", "polygon" };
-    object_renderer* p_renderer = new object_renderer(p_screen, log_file);
-    double vertice_x = 0.0;
-    double vertice_y = 0.0;
-    vector<double> object_angle = { 0.5, -15.0, 5.0 };    //this will increment to rotation
+    //object angle speeds
+    vector<double> object_angle = { 0.5, -15.0, 5.0, 2.0 };    //this will increment to rotation
 
-    m_vert_mapped[object_names.at(0)] = p_object1;
-    m_vert_mapped[object_names.at(1)] = p_object2;
-    m_vert_mapped[object_names.at(2)] = p_object3;
+    m_vert_mapped[object_names.at(0)] = new vertice_obj();
+    m_vert_mapped[object_names.at(1)] = new vertice_obj();
+    m_vert_mapped[object_names.at(2)] = new vertice_obj();
+    m_vert_mapped[object_names.at(3)] = new vertice_obj();
     
     m_vert_mapped.find("square")->second->set_obj_coord(25.0, 25.0, 0.0);
     m_vert_mapped.find("square")->second->add_vertice(15.0, 15.0, 0.0);
@@ -57,35 +51,67 @@ int main()
     m_vert_mapped.find("polygon")->second->add_vertice(50.0, 40.0, 0.0);
     m_vert_mapped.find("polygon")->second->add_vertice(37.0, 53.0, 0.0);
     m_vert_mapped.find("polygon")->second->add_vertice(24.0, 40.0, 0.0);
-
     m_vert_mapped.find("polygon")->second->set_face({ 1, 2, 3, 4, 5 });
     m_vert_mapped.find("polygon")->second->obj_prepare();
+
+    m_vert_mapped.find("shape")->second->set_obj_coord(37.0, 37.0, 0.0);
+    m_vert_mapped.find("shape")->second->add_vertice(3.0, 3.0, 0.0);
+    m_vert_mapped.find("shape")->second->add_vertice(57.0, 17.0, 0.0);
+    m_vert_mapped.find("shape")->second->add_vertice(57.0, 57.0, 0.0);
+    m_vert_mapped.find("shape")->second->add_vertice(17.0, 57.0, 0.0);
+    m_vert_mapped.find("shape")->second->set_face({ 1, 2, 3 });
+    m_vert_mapped.find("shape")->second->set_face({ 4, 3, 1 });
+    m_vert_mapped.find("shape")->second->set_face({ 2, 4 });
+    m_vert_mapped.find("shape")->second->obj_prepare();
 
     for (size_t i = 0; i < object_names.size(); i++)
     {
         p_renderer->render_object(*m_vert_mapped.find(object_names.at(i))->second);
-        p_screen->print_grid();
     }
 
-    if (log_file.is_open())
-    {
-        log_file << logEvent(LOG_MAIN, LOG_TYPE_INFO, "Loaded neccessary requirements");
-    }
+    p_screen->print_grid();
+
+    logEvent(LOG_MAIN, LOG_TYPE_INFO, "Loaded neccessary requirements");
 
     string start = "";
     getline(cin, start);
 
-    if (log_file.is_open())
-    {
-        log_file << logEvent(LOG_MAIN, LOG_TYPE_INFO, "Proccess continue after user input: " + start);
-    }
+    logEvent(LOG_MAIN, LOG_TYPE_INFO, "Proccess continue after user input: " + start);
 
     //main loop
     while (!(GetKeyState(VK_ESCAPE) < 0))
     {
+        keyboard.keyboard_key_up();
+        keyboard.keyboard_key_down();
+        keyboard.keyboard_key_left();
+        keyboard.keyboard_key_right();
+
+        switch (keyboard.get_key())
+        {
+        case VK_UP:
+            p_screen->shift_y(1);
+            break;
+        case VK_DOWN:
+            p_screen->shift_y(-1);
+            break;
+        case VK_LEFT:
+            p_screen->shift_x(-1);
+            break;
+        case VK_RIGHT:
+            p_screen->shift_x(1);
+            break;
+        default:
+            break;
+        }
+
+        keyboard.reset_keys();
+
         if (real_timer(15625000.0))
         {
             p_screen->refresh_grid();
+
+            double vertice_x = 0.0;
+            double vertice_y = 0.0;
 
             for (size_t i = 0; i < object_names.size(); i++)
             {
@@ -107,11 +133,7 @@ int main()
         }
     }
 
-    if (log_file.is_open())
-    {
-        log_file << logEvent(LOG_MAIN, LOG_TYPE_INFO, "Ending proccess...");
-        log_file.close();
-    }
+    logEvent(LOG_MAIN, LOG_TYPE_INFO, "Ending proccess...");
 
     size_t i = 0;
 
@@ -130,6 +152,7 @@ int main()
     p_renderer = nullptr;
     delete p_screen;
     p_screen = nullptr;
+    logClose();
 
     return 0;
 }
